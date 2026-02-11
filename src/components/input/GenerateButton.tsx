@@ -1,13 +1,13 @@
 import { useAppStore } from '../../stores/appStore';
 import { useRepurpose } from '../../hooks/useRepurpose';
 import { LoadingSpinner } from '../common/LoadingSpinner';
+import { hasEligibleContent } from '../../lib/contentValidation';
 
 export function GenerateButton() {
   const { rawContent, sourceUrl, useUrl, selectedFormats } = useAppStore();
   const { generate, isGenerating } = useRepurpose();
 
-  const wordCount = rawContent.trim() ? rawContent.trim().split(/\s+/).length : 0;
-  const hasContent = useUrl ? sourceUrl.trim().length > 0 : wordCount >= 50;
+  const hasContent = hasEligibleContent({ useUrl, sourceUrl, rawContent });
   const hasFormats = selectedFormats.length > 0;
   const canGenerate = hasContent && hasFormats && !isGenerating;
 

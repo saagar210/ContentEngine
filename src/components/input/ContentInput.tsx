@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useAppStore } from '../../stores/appStore';
 import { LoadingSpinner } from '../common/LoadingSpinner';
+import { getWordCount, hasEligibleContent, MIN_CONTENT_WORDS } from '../../lib/contentValidation';
 
 export function ContentInput() {
   const { rawContent, setRawContent, title, setTitle, sourceUrl, setSourceUrl, useUrl, setUseUrl } =
@@ -8,8 +9,8 @@ export function ContentInput() {
   const [isFetching, setIsFetching] = useState(false);
   const [fetchError, setFetchError] = useState<string | null>(null);
 
-  const wordCount = rawContent.trim() ? rawContent.trim().split(/\s+/).length : 0;
-  const isValid = useUrl ? sourceUrl.trim().length > 0 : wordCount >= 50;
+  const wordCount = getWordCount(rawContent);
+  const isValid = hasEligibleContent({ useUrl, sourceUrl, rawContent });
 
   const handleFetch = async () => {
     if (!sourceUrl.trim()) return;
@@ -84,20 +85,20 @@ export function ContentInput() {
           <textarea
             value={rawContent}
             onChange={(e) => setRawContent(e.target.value)}
-            placeholder="Paste your article, blog post, or content here (min. 50 words)..."
+            placeholder={`Paste your article, blog post, or content here (min. ${MIN_CONTENT_WORDS} words)...`}
             rows={12}
             className="w-full resize-none rounded-lg border border-border bg-surface px-4 py-3 text-sm leading-relaxed text-text placeholder:text-text-secondary focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
           />
           <div className="absolute bottom-3 right-3 flex items-center gap-2">
             <span
               className={`text-xs font-medium ${
-                wordCount >= 50 ? 'text-success' : 'text-text-secondary'
+                wordCount >= MIN_CONTENT_WORDS ? 'text-success' : 'text-text-secondary'
               }`}
             >
               {wordCount} words
             </span>
             {!isValid && wordCount > 0 && (
-              <span className="text-xs text-warning">min 50</span>
+              <span className="text-xs text-warning">min {MIN_CONTENT_WORDS}</span>
             )}
           </div>
         </div>
