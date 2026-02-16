@@ -3,10 +3,12 @@ import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 
 const host = process.env.TAURI_DEV_HOST;
+const cacheDir = process.env.VITE_CACHE_DIR;
 
 export default defineConfig(async () => ({
   plugins: [react(), tailwindcss()],
   clearScreen: false,
+  cacheDir,
   server: {
     port: 1420,
     strictPort: true,
