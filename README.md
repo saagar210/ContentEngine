@@ -119,8 +119,11 @@ Use the releases page for installation assets and platform-specific install inst
 # Install dependencies
 pnpm install
 
-# Run dev server
+# Run app in normal dev mode
 pnpm tauri:dev
+
+# Run app in lean dev mode (temp build caches + auto-clean on exit)
+pnpm lean:dev
 
 # Run tests
 pnpm test              # Frontend
@@ -129,6 +132,22 @@ cargo test --manifest-path src-tauri/Cargo.toml  # Backend
 # Lint & format
 pnpm lint
 pnpm format
+```
+
+### Normal vs Lean Dev
+
+- `pnpm tauri:dev` keeps build artifacts (faster restarts, higher disk usage)
+- `pnpm lean:dev` stores Rust/Vite build caches in a temporary folder and removes heavy artifacts on exit (lower disk usage, slower cold starts)
+- If port `1420` is already used, `pnpm lean:dev` automatically tries ports `1421-1425`
+
+### Cleanup Commands
+
+```bash
+# Remove heavy build artifacts only (safe for daily use)
+pnpm clean:heavy
+
+# Remove all reproducible local caches, including node_modules
+pnpm clean:local
 ```
 
 ### Build
